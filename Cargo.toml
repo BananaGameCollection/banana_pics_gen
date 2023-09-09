@@ -1,0 +1,17 @@
+[package]
+name = "banana_pics_gen"
+authors = ["CaiqibananaTeam"]
+about= "A CLI app to generate pic in used to fill in BananaGames"
+version = "0.1.0"
+edition = "2021"
+
+[profile.release]
+strip = "debuginfo"
+lto = true
+panic = 'unwind'
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+clap = { version = "4.4.2", features = ["derive"] }
+image = "0.24.7"
