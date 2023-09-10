@@ -1,75 +1,35 @@
 pub mod data;
 pub mod config;
 mod log;
+mod creator;
 
-use std::path::Path;
-use image::{DynamicImage, ImageBuffer, Rgb, RgbImage};
-use image::DynamicImage::ImageRgb16;
-use crate::data::Matrix;
-use crate::log::{GenComplete, GenStart, Logger};
-use image::io::Reader as ImgReader;
+use crate::creator::{adapt_images, fill_canvas, fit_images, load_images, new_canvas, write_image};
+use crate::data::{Matrix, Mode};
+use crate::log::{GenCanceled, GenComplete, GenStart, GenWrapping, Logger};
 
 
 pub fn auto_gen() {
     GenStart::print_stats();
+    GenCanceled::print_stats();
 }
 
-pub fn mahjong(matrix: &Matrix) {
-    println!("{:?}", matrix);
+pub fn mahjong(matrix: &Matrix, mode: &Mode, seed: u64) {
+    println!("matrix: {:?}", matrix);
     GenStart::print_stats();
+
     let mut canvas = new_canvas(matrix);
+    let mut img_sources = load_images(mode);
 
-    fill_canvas(&mut canvas, matrix);
+    fit_images(&mut img_sources, matrix);
 
+    let new_images = adapt_images(&mut img_sources, matrix, seed);
+
+    fill_canvas(&mut canvas, matrix, &new_images);
+
+    GenWrapping::print_stats();
 
     write_image(canvas);
+
     GenComplete::print_stats();
 }
 
-pub fn load_images() -> Vec<DynamicImage> {
-    let mut images: Vec<DynamicImage> = Vec::new();
-
-    load_image("");
-    vec![]
-}
-
-
-fn load_image(file: &str) -> DynamicImage {
-    ImgReader::open(file)
-        .expect("error load image")
-        .decode()
-        .expect("error decode image")
-}
-
-pub fn new_canvas(matrix: &Matrix) -> ImageBuffer<Rgb<u8>, Vec<u8>> {
-
-    let mut img = RgbImage::new(matrix.width, matrix.height);
-    let (h_dp, w_dp) = (matrix.height/matrix.row, matrix.width/matrix.column);
-
-    for c in 1..matrix.column {
-        let pos_x = c * w_dp;
-        for h in 0..img.height() {
-            img.put_pixel(pos_x, h, Rgb([255, 255, 255]));
-        }
-    }
-    for r in 1..matrix.row {
-        let pos_y = r * h_dp;
-        for w in 0..img.width() {
-            img.put_pixel(w, pos_y, Rgb([255, 255, 255]));
-        }
-    }
-
-    img
-}
-
-pub fn fill_canvas(canvas: &mut ImageBuffer<Rgb<u8>, Vec<u8>>, matrix: &Matrix) {
-
-}
-
-pub fn write_image(img: ImageBuffer<Rgb<u8>, Vec<u8>>) {
-    let dir = "./banana_img/";
-    if !Path::new(dir).is_dir() {
-        std::fs::create_dir("./banana_img").expect("error making dir");
-    }
-    img.save(format!("{}banana_mahjong.jpg", dir)).expect("error saving")
-}

@@ -1,6 +1,6 @@
 use clap::Parser;
 use banana_pics_gen::{auto_gen, mahjong};
-use banana_pics_gen::data::{Args, Pattern};
+use banana_pics_gen::data::{Args, Mode, Pattern};
 
 fn main() {
     let arg = Args::parse();
@@ -16,10 +16,11 @@ fn main() {
             auto_gen()
         }
         Pattern::Mahjong(matrix) => {
+            let mut m = &Mode::Default;
             if let Some(mode) = &matrix.mode {
-
+                m = mode
             }
-            mahjong(&matrix)
+            mahjong(&matrix, m, seed)
         }
     }
 }

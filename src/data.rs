@@ -29,15 +29,15 @@ pub enum Pattern {
 pub struct Matrix {
 
     /// The width of Mahjong pic
-    #[arg(short, long, default_value_t = 600)]
+    #[arg(long, default_value_t = 600)]
     pub width: u32,
 
     /// The height of Mahjong pic
-    #[arg(short, long, default_value_t = 600)]
+    #[arg(long, default_value_t = 800)]
     pub height: u32,
 
     /// Number of pictures per row
-    #[arg(short, long, default_value_t = 5)]
+    #[arg(short, long, default_value_t = 6)]
     pub row: u32,
 
     /// Number of pictures per column
@@ -45,13 +45,23 @@ pub struct Matrix {
     pub column: u32,
 
     /// Select generate mode
-    #[arg[long]]
+    #[clap(subcommand)]
     pub mode: Option<Mode>,
 }
 
+#[derive(Copy, Clone, Debug, Parser)]
 pub enum Mode {
+
+    /// Generate by default pictures[All]
+    Default,
+
+    /// Generate by pictures of Lu
     Lu,
+
+    /// Generate by pictures of Banana
     Banana,
+
+    /// Generate by pictures of strange-shape
     Strange,
 }
 
