@@ -39,8 +39,8 @@ pub fn load_images(mode: &Mode) -> Vec<DynamicImage> {
     let folder = match mode {
         Mode::Default => { "./res/all" }
         Mode::Lu => { "./res/lu" }
-        Mode::Banana => { "./res/.banana" }
-        Mode::Strange => { "./res/.strange" }
+        Mode::Banana => { "./res/banana" }
+        Mode::Strange => { "./res/strange" }
     };
     let mut images: Vec<DynamicImage> = Vec::new();
 
